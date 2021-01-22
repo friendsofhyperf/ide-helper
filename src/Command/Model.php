@@ -28,10 +28,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Model extends Command
 {
-    // CLI名称
     protected $name = 'ide-helper:model';
 
-    // 生成文件名称
     protected $filename = '_ide_helper_models.php';
 
     protected $write_model_magic_where = true;
@@ -203,13 +201,6 @@ class Model extends Command
                                  $e->getTraceAsString());
                 }
             }
-        }
-
-        if (! $hasDoctrine) {
-            $this->error(
-                'Warning: `"doctrine/dbal": "^2.5|^3.0"` is required to load database information. ' .
-                'Please require that in your composer.json and run `composer update`.'
-            );
         }
 
         return $output;
