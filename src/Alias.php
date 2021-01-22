@@ -4,12 +4,12 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @link     https://github.com/friendsofhyperf/ide-helper
+ * @document https://github.com/friendsofhyperf/ide-helper/blob/master/README.md
+ * @contact  huangdijia@gmail.com
+ * @license  https://github.com/friendsofhyperf/ide-helper/blob/master/LICENSE
  */
-namespace Naixiaoxin\HyperfIdeHelper;
+namespace FriendsOfHyperf\IdeHelper;
 
 use Barryvdh\Reflection\DocBlock;
 use Barryvdh\Reflection\DocBlock\Context;
@@ -47,6 +47,10 @@ class Alias
     protected $magicMethods;
 
     protected $usedMethods = [];
+
+    protected $extendsClass;
+
+    protected $extendsNamespace;
 
     /**
      * @param string $alias
@@ -200,8 +204,8 @@ class Alias
         return $this->methods;
     }
 
-    /*
-     * Get the docblock for this alias
+    /**
+     * Get the docblock for this alias.
      *
      * @param string $prefix
      * @return mixed

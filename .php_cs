@@ -3,10 +3,10 @@
 $header = <<<'EOF'
 This file is part of Hyperf.
 
-@link     https://www.hyperf.io
-@document https://doc.hyperf.io
-@contact  group@hyperf.io
-@license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+@link     https://github.com/friendsofhyperf/ide-helper
+@document https://github.com/friendsofhyperf/ide-helper/blob/master/README.md
+@contact  huangdijia@gmail.com
+@license  https://github.com/friendsofhyperf/ide-helper/blob/master/LICENSE
 EOF;
 
 return PhpCsFixer\Config::create()

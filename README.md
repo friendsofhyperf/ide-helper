@@ -1,17 +1,18 @@
-# hyperf-ide-helper
+# ide-helper
 
 IDE Helper for Hyperf
 
-
 ## 安装
-~~~shell script
-composer require naixiaoxin/hyperf-ide-helper
+
+~~~bash
+composer require friendsofhyperf/ide-helper
 ~~~
 
-
 ## 使用
+
 执行以下命令生成model即可
-~~~ shell
+
+~~~bash
 php ./bin/hyperf.php ide-helper:model
 ~~~
 

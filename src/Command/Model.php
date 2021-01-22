@@ -4,12 +4,12 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @link     https://github.com/friendsofhyperf/ide-helper
+ * @document https://github.com/friendsofhyperf/ide-helper/blob/master/README.md
+ * @contact  huangdijia@gmail.com
+ * @license  https://github.com/friendsofhyperf/ide-helper/blob/master/LICENSE
  */
-namespace Naixiaoxin\HyperfIdeHelper\Command;
+namespace FriendsOfHyperf\IdeHelper\Command;
 
 use Barryvdh\Reflection\DocBlock;
 use Barryvdh\Reflection\DocBlock\Context;
@@ -54,6 +54,12 @@ class Model extends Command
 
     private $config;
 
+    private $dateClass;
+
+    private $nullableColumns;
+
+    private $files;
+
     public function __construct()
     {
         parent::__construct();
@@ -96,7 +102,7 @@ class Model extends Command
         $paramsWithDefault = [];
         /** @var \ReflectionParameter $param */
         foreach ($method->getParameters() as $param) {
-            $paramClass = $param->getClass();
+            $paramClass = $param->getDeclaringClass();
             $paramStr = (! is_null($paramClass) ? '\\' . $paramClass->getName() . ' ' : '') . '$' . $param->getName();
             $params[] = $paramStr;
             if ($param->isOptional() && $param->isDefaultValueAvailable()) {
@@ -137,7 +143,7 @@ class Model extends Command
  */
 \n\n";
 
-        $output .= \Naixiaoxin\HyperfIdeHelper\Eloquent::make();
+        $output .= \FriendsOfHyperf\IdeHelper\Eloquent::make();
 
         $hasDoctrine = interface_exists('Doctrine\DBAL\Driver');
 
@@ -201,7 +207,7 @@ class Model extends Command
 
         if (! $hasDoctrine) {
             $this->error(
-                'Warning: `"doctrine/dbal": "~2.3"` is required to load database information. ' .
+                'Warning: `"doctrine/dbal": "^2.5|^3.0"` is required to load database information. ' .
                 'Please require that in your composer.json and run `composer update`.'
             );
         }
@@ -211,7 +217,9 @@ class Model extends Command
 
     protected function loadModels()
     {
+        defined('BASE_PATH') or define('BASE_PATH', __DIR__);
         $models = [];
+
         foreach ($this->dirs as $dir) {
             $dir = BASE_PATH . '/' . $dir;
             if (file_exists($dir)) {
@@ -220,6 +228,7 @@ class Model extends Command
                 }
             }
         }
+
         return $models;
     }
 
@@ -300,8 +309,10 @@ class Model extends Command
      */
     protected function getPropertiesFromTable($model)
     {
-        $table = $model->getConnection()->getTablePrefix() . $model->getTable();
-        $schema = $model->getConnection()->getDoctrineSchemaManager($table);
+        /** @var \Hyperf\Database\Connection $connection */
+        $connection = $model->getConnection();
+        $table = $connection->getTablePrefix() . $model->getTable();
+        $schema = $connection->getDoctrineSchemaManager($table);
         $databasePlatform = $schema->getDatabasePlatform();
         $databasePlatform->registerDoctrineTypeMapping('enum', 'string');
 
@@ -596,6 +607,7 @@ class Model extends Command
         $properties = [];
         $methods = [];
         foreach ($phpdoc->getTags() as $tag) {
+            /** @var \Barryvdh\Reflection\DocBlock\Tag\MethodTag|\Barryvdh\Reflection\DocBlock\Tag\ParamTag $tag */
             $name = $tag->getName();
             if ($name == 'property' || $name == 'property-read' || $name == 'property-write') {
                 $properties[] = $tag->getVariableName();
@@ -686,7 +698,9 @@ class Model extends Command
         $phpdoc = new DocBlock($reflection);
 
         if ($phpdoc->hasTag('return')) {
-            $type = $phpdoc->getTagsByName('return')[0]->getType();
+            /** @var \Barryvdh\Reflection\DocBlock\Tag\ReturnTag $tag */
+            $tag = $phpdoc->getTagsByName('return')[0];
+            $type = $tag->getType();
         }
 
         return $type;
