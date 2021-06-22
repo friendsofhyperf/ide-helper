@@ -151,7 +151,7 @@ class Macro extends Command
         $contents[] = 'namespace {}';
         $contents[] = '';
 
-        $filename = BASE_PATH . '_macro_ide_helper.php';
+        $filename = '_macro_ide_helper.php';
         $this->filesystem->put($filename, join("\n", $contents));
 
         $this->info("A new helper file was written to {$filename}");
