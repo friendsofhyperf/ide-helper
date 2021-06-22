@@ -59,9 +59,10 @@ class Macro extends Command
         }
 
         $classMaps = include $classMapFile;
+        $namespaces = $this->config->get('ide-helper.macro.$namespaces', []);
 
         $docs = collect($classMaps)
-            ->when($this->config->get('ide-helper.macro.$namespaces', []), function ($collection, $namespaces) {
+            ->when(count($namespaces) > 0, function ($collection) use ($namespaces) {
                 return $collection->filter(function ($path, $class) use ($namespaces) {
                     return Str::startsWith($class, $namespaces);
                 });
