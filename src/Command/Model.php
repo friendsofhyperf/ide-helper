@@ -19,16 +19,18 @@ use Composer\Autoload\ClassMapGenerator;
 use Hyperf\Command\Command;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\Model\Relations\Relation;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
+use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Model extends Command
 {
-    protected $name = 'ide-helper:model';
+    protected $signature = 'ide-helper:model';
+
+    protected $description = 'Generate a new Model IDE Helper file.';
 
     protected $filename = '_ide_helper_models.php';
 
@@ -48,21 +50,31 @@ class Model extends Command
 
     private $dirs = ['app'];
 
+    /**
+     * @var ContainerInterface
+     */
     private $container;
 
+    /**
+     * @var ConfigInterface
+     */
     private $config;
 
+    /**
+     * @var string
+     */
     private $dateClass;
 
     private $nullableColumns;
 
     private $files;
 
-    public function __construct()
+    public function __construct(ContainerInterface $container)
     {
         parent::__construct();
-        $this->container = ApplicationContext::getContainer();
-        $this->config = $this->container->get(ConfigInterface::class);
+        $this->container = $container;
+        $this->config = $container->get(ConfigInterface::class);
+        $this->dateClass = '\Carbon\Carbon';
     }
 
     /**
@@ -72,19 +84,16 @@ class Model extends Command
     {
         $this->loadIgnore();
 
-        $this->dateClass = '\Carbon\Carbon';
         $content = $this->generateDocs([]);
         $file = $this->container->get(Filesystem::class);
         $file->put($this->filename, $content);
     }
 
-    public function getOption($key, $default)
+    protected function configure()
     {
-        $result = $this->input->getOption($key);
-        if ($result) {
-            return $result;
-        }
-        return $default;
+        parent::configure();
+        $this->addOption('ignore', 'i', InputOption::VALUE_OPTIONAL, 'What prefix that you want the Model set.');
+        $this->setDescription($this->description);
     }
 
     /**
@@ -93,9 +102,9 @@ class Model extends Command
      * @param $method
      * @return array
      */
-    public function getParameters($method)
+    protected function getParameters($method)
     {
-        //Loop through the default values for paremeters, and make the correct output string
+        //Loop through the default values for parameters, and make the correct output string
         $params = [];
         $paramsWithDefault = [];
         /** @var \ReflectionParameter $param */
@@ -123,9 +132,9 @@ class Model extends Command
         return $paramsWithDefault;
     }
 
-    protected function configure()
+    protected function getOption($key, $default = null)
     {
-        $this->addOption('ignore', 'i', InputOption::VALUE_OPTIONAL, 'What prefix that you want the Model set.');
+        return $this->input->getOption($key) ?? $default;
     }
 
     protected function generateDocs($loadModels)
@@ -224,7 +233,7 @@ class Model extends Command
     }
 
     /**
-     * cast the properties's type from $casts.
+     * cast the properties 's type from $casts.
      *
      * @param \Hyperf\Database\Model\Model $model
      */
@@ -281,7 +290,7 @@ class Model extends Command
     }
 
     /**
-     * Returns the overide type for the give type.
+     * Returns the override type for the give type.
      *
      * @param string $type
      * @return string

@@ -20,7 +20,7 @@ class ConfigProvider
             ],
             'commands' => [
                 Command\Model::class,
-                Command\Eloquent::class,
+                Command\Macro::class,
             ],
             'annotations' => [
                 'scan' => [

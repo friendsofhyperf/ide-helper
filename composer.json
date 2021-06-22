@@ -21,7 +21,8 @@
         "php": ">=7.2",
         "ext-swoole": ">=4.4",
         "barryvdh/reflection-docblock": "^2.0",
-        "composer/composer": "^1.0|^2.0"
+        "composer/composer": "^1.0|^2.0",
+        "hyperf/filesystem": "^2.1"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
@@ -31,7 +32,7 @@
         "hyperf/testing": "^2.0",
         "hyperf/utils": "^2.0",
         "phpstan/phpstan": "^0.12",
-        "swoft/swoole-ide-helper": "dev-master"
+        "swoole/ide-helper": "dev-master"
     },
     "config": {
         "sort-packages": true
