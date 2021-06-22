@@ -2,18 +2,24 @@
 
 IDE Helper for Hyperf
 
-## 安装
+## Installation
 
 ~~~bash
 composer require friendsofhyperf/ide-helper
 ~~~
 
-## 使用
+## Usage
 
-执行以下命令生成model即可
+- Generate model helper
 
 ~~~bash
 php ./bin/hyperf.php ide-helper:model
+~~~
+
+- Generate macro helper
+
+~~~bash
+php ./bin/hyperf.php ide-helper:macro
 ~~~
 
 ## License
