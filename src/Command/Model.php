@@ -30,7 +30,7 @@ class Model extends Command
     /**
      * @var string
      */
-    protected $signature = 'ide-helper:model {--ignore|i : What prefix that you want the Model set.}';
+    protected $signature = 'ide-helper:model {--i|ignore : What prefix that you want the Model set.}';
 
     /**
      * @var string
