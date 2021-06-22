@@ -30,7 +30,7 @@ class Model extends Command
     /**
      * @var string
      */
-    protected $signature = 'ide-helper:model {--i|ignore : What prefix that you want the Model set.}';
+    protected $signature = 'ide-helper:model {--I|ignore= : What prefix that you want the Model set.}';
 
     /**
      * @var string
@@ -328,7 +328,7 @@ class Model extends Command
      */
     protected function getTypeOverride($type)
     {
-        $typeOverrides = $this->config->get('ide-helper.type_overrides', []);
+        $typeOverrides = $this->config->get('ide-helper.model.type_overrides', []);
 
         return isset($typeOverrides[$type]) ? $typeOverrides[$type] : $type;
     }
@@ -348,7 +348,7 @@ class Model extends Command
         $databasePlatform->registerDoctrineTypeMapping('enum', 'string');
 
         $platformName = $databasePlatform->getName();
-        $customTypes = $this->config->get("ide-helper.custom_db_types.{$platformName}", []);
+        $customTypes = $this->config->get("ide-helper.model.custom_db_types.{$platformName}", []);
         foreach ($customTypes as $yourTypeName => $doctrineTypeName) {
             $databasePlatform->registerDoctrineTypeMapping($yourTypeName, $doctrineTypeName);
         }
@@ -715,7 +715,7 @@ class Model extends Command
      */
     protected function hasCamelCaseModelProperties()
     {
-        return $this->config->get('ide-helper.model_camel_case_properties', false);
+        return $this->config->get('ide-helper.model.camel_case_properties', false);
     }
 
     /**
@@ -760,7 +760,7 @@ class Model extends Command
         $ignore = $this->getOption('ignore', '');
         $this->ignore = array_merge(
             explode(',', $ignore),
-            $this->config->get('ide-helper.ignored_models', [])
+            $this->config->get('ide-helper.model.ignores', [])
         );
     }
 
