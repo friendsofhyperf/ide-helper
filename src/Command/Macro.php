@@ -13,6 +13,7 @@ namespace FriendsOfHyperf\IdeHelper\Command;
 
 use Barryvdh\Reflection\DocBlock;
 use Hyperf\Command\Command;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\Macroable;
@@ -36,10 +37,16 @@ class Macro extends Command
      */
     private $filesystem;
 
+    /**
+     * @var ConfigInterface
+     */
+    private $config;
+
     public function __construct(ContainerInterface $container)
     {
         parent::__construct();
         $this->filesystem = $container->get(Filesystem::class);
+        $this->config = $container->get(ConfigInterface::class);
     }
 
     public function handle()
@@ -52,16 +59,17 @@ class Macro extends Command
         }
 
         $classMaps = include $classMapFile;
-        // $namespaces = config('macro-ide-helper.namespaces');
 
         $docs = collect($classMaps)
-            // ->filter(function ($path, $class) use ($namespaces) {
-            //     return Str::startsWith($class, $namespaces);
-            // })
-            // ->reject(function ($path, $class) {
-            //     $rejects = config('macro-ide-helper.rejects', []);
-            //     return in_array($class, $rejects);
-            // })
+            ->when($this->config->get('ide-helper.macro.$namespaces', []), function ($collection, $namespaces) {
+                return $collection->filter(function ($path, $class) use ($namespaces) {
+                    return Str::startsWith($class, $namespaces);
+                });
+            })
+            ->reject(function ($path, $class) {
+                $rejects = $this->config->get('ide-helper.macro.rejects', []);
+                return in_array($class, $rejects);
+            })
             ->mapWithKeys(function ($path, $class) {
                 try {
                     $reflection = new \ReflectionClass($class);
@@ -73,7 +81,7 @@ class Macro extends Command
 
                     return [$class => $reflection];
                 } catch (Throwable $e) {
-                    $this->warn($e->getMessage());
+                    $this->warn($e->getMessage(), 'v');
                     return [];
                 }
             })
@@ -99,7 +107,7 @@ class Macro extends Command
 
                         $params = join(', ', array_map([$this, 'prepareParameter'], $macro->getParameters()));
                         $doc = $macro->getDocComment();
-                        $returnType = $doc && preg_match('/@return ([a-zA-Z\\[\\]\\|\\\]+)/', $doc, $matches) ? $matches[1] : '';
+                        $returnType = $doc && preg_match('/@return ([a-zA-Z\[\]\|\\]+)/', $doc, $matches) ? $matches[1] : '';
                         $phpDoc->appendTag(DocBlock\Tag::createInstance("@method {$returnType} {$name}({$params})"));
 
                         $see = $macro->getClosureScopeClass()->getName();
@@ -123,7 +131,7 @@ class Macro extends Command
                         ],
                     ];
                 } catch (Throwable $e) {
-                    $this->warn($e->getMessage());
+                    $this->warn($e->getMessage(), 'v');
                     return [];
                 }
             })

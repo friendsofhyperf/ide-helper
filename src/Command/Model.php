@@ -23,31 +23,63 @@ use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Model extends Command
 {
-    protected $signature = 'ide-helper:model';
+    /**
+     * @var string
+     */
+    protected $signature = 'ide-helper:model {--ignore|i : What prefix that you want the Model set.}';
 
+    /**
+     * @var string
+     */
     protected $description = 'Generate a new Model IDE Helper file.';
 
+    /**
+     * @var string
+     */
     protected $filename = '_ide_helper_models.php';
 
-    protected $write_model_magic_where = true;
+    /**
+     * @var bool
+     */
+    protected $writeModelMagicWhere = true;
 
+    /**
+     * @var array
+     */
     protected $properties = [];
 
+    /**
+     * @var array
+     */
     protected $methods = [];
 
+    /**
+     * @var bool
+     */
     protected $write = false;
 
+    /**
+     * @var bool
+     */
     protected $reset = true;
 
-    protected $keep_text;
+    /**
+     * @var bool
+     */
+    protected $keepText;
 
+    /**
+     * @var array
+     */
     private $ignore = [];
 
+    /**
+     * @var string[]
+     */
     private $dirs = ['app'];
 
     /**
@@ -92,7 +124,6 @@ class Model extends Command
     protected function configure()
     {
         parent::configure();
-        $this->addOption('ignore', 'i', InputOption::VALUE_OPTIONAL, 'What prefix that you want the Model set.');
         $this->setDescription($this->description);
     }
 
@@ -369,7 +400,7 @@ class Model extends Command
                     $this->nullableColumns[$name] = true;
                 }
                 $this->setProperty($name, $type, true, true, $comment, ! $column->getNotnull());
-                if ($this->write_model_magic_where) {
+                if ($this->writeModelMagicWhere) {
                     $this->setMethod(
                         Str::camel('where_' . $name),
                         '\Hyperf\Database\Model\Builder|\\' . get_class($model),
@@ -591,7 +622,7 @@ class Model extends Command
 
         if ($this->reset) {
             $phpdoc = new DocBlock('', new Context($namespace));
-            if ($this->keep_text) {
+            if ($this->keepText) {
                 $phpdoc->setText(
                     (new DocBlock($reflection, new Context($namespace)))->getText()
                 );
