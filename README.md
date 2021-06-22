@@ -4,7 +4,6 @@
 [![Total Downloads](https://poser.pugx.org/friendsofhyperf/ide-helper/d/total.png)](https://packagist.org/packages/friendsofhyperf/ide-helper)
 [![GitHub license](https://img.shields.io/github/license/friendsofhyperf/ide-helper)](https://github.com/friendsofhyperf/ide-helper)
 
-
 IDE Helper for Hyperf
 
 ## Installation
