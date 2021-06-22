@@ -73,7 +73,7 @@ class Macro extends Command
 
                     return [$class => $reflection];
                 } catch (Throwable $e) {
-                    $this->error($e->getMessage());
+                    $this->warn($e->getMessage());
                     return [];
                 }
             })
@@ -123,7 +123,7 @@ class Macro extends Command
                         ],
                     ];
                 } catch (Throwable $e) {
-                    $this->error($e->getMessage());
+                    $this->warn($e->getMessage());
                     return [];
                 }
             })
