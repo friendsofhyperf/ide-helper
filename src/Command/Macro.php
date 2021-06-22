@@ -25,7 +25,7 @@ class Macro extends Command
     /**
      * @var string
      */
-    protected $signature = 'ide-helper:macro';
+    protected $signature = 'ide-helper:macro {--N|name=_ide_helper_macros.php : Name of IDE Helper.}';
 
     /**
      * @var string
@@ -160,7 +160,7 @@ class Macro extends Command
         $contents[] = 'namespace {}';
         $contents[] = '';
 
-        $filename = '_macro_ide_helper.php';
+        $filename = $this->input->getOption('name');
         $this->filesystem->put($filename, join("\n", $contents));
 
         $this->info("A new helper file was written to {$filename}");

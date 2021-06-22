@@ -30,17 +30,12 @@ class Model extends Command
     /**
      * @var string
      */
-    protected $signature = 'ide-helper:model {--I|ignore= : What prefix that you want the Model set.}';
+    protected $signature = 'ide-helper:model {--I|ignore= : What prefix that you want the Model set.} {--N|name=_ide_helper_models.php : Name of IDE Helper.}';
 
     /**
      * @var string
      */
     protected $description = 'Generate a new Model IDE Helper file.';
-
-    /**
-     * @var string
-     */
-    protected $filename = '_ide_helper_models.php';
 
     /**
      * @var bool
@@ -97,14 +92,21 @@ class Model extends Command
      */
     private $dateClass;
 
+    /**
+     * @var array
+     */
     private $nullableColumns;
 
-    private $files;
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
 
     public function __construct(ContainerInterface $container)
     {
         parent::__construct();
         $this->container = $container;
+        $this->filesystem = $this->container->get(Filesystem::class);
         $this->config = $container->get(ConfigInterface::class);
         $this->dateClass = '\Carbon\Carbon';
     }
@@ -117,8 +119,8 @@ class Model extends Command
         $this->loadIgnore();
 
         $content = $this->generateDocs([]);
-        $file = $this->container->get(Filesystem::class);
-        $file->put($this->filename, $content);
+        $filename = $this->input->getOption('name');
+        $this->filesystem->put($filename, $content);
     }
 
     protected function configure()
@@ -691,7 +693,7 @@ class Model extends Command
 
         if ($this->write) {
             $filename = $reflection->getFileName();
-            $contents = $this->files->get($filename);
+            $contents = $this->filesystem->get($filename);
             if ($originalDoc) {
                 $contents = str_replace($originalDoc, $docComment, $contents);
             } else {
@@ -702,7 +704,7 @@ class Model extends Command
                     $contents = substr_replace($contents, $replace, $pos, strlen($needle));
                 }
             }
-            if ($this->files->put($filename, $contents)) {
+            if ($this->filesystem->put($filename, $contents)) {
                 $this->info('Written new phpDocBlock to ' . $filename);
             }
         }
