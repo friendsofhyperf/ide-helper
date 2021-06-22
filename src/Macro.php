@@ -13,9 +13,7 @@ namespace FriendsOfHyperf\IdeHelper;
 
 use Barryvdh\Reflection\DocBlock;
 use Barryvdh\Reflection\DocBlock\Tag;
-// use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Hyperf\Database\Model\Builder as EloquentBuilder;
-// use Illuminate\Support\Collection;
 use Hyperf\Utils\Collection;
 
 class Macro extends Method

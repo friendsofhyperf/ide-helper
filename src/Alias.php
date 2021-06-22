@@ -88,7 +88,7 @@ class Alias
             $this->phpdoc = new DocBlock(new ReflectionClass($alias), new Context($this->namespace));
         }
 
-        if ($facade === '\Illuminate\Database\Eloquent\Model') {
+        if ($facade === '\Hyperf\Database\Model\Model') {
             $this->usedMethods = ['decrement', 'increment'];
         }
     }
@@ -401,7 +401,7 @@ class Alias
 
             // Check if the class is macroable
             $traits = collect($reflection->getTraitNames());
-            if ($traits->contains('Illuminate\Support\Traits\Macroable')) {
+            if ($traits->contains('Hyperf\Utils\Traits\Macroable')) {
                 $properties = $reflection->getStaticProperties();
                 $macros = isset($properties['macros']) ? $properties['macros'] : [];
                 foreach ($macros as $macro_name => $macro_func) {
